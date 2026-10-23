@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
-import re
 import subprocess
 import wave
 from pathlib import Path
@@ -19,6 +17,7 @@ from phoneme_modelling.synthetic_audio.generation import (
     SyntheticAudioGenerator,
 )
 
+
 OPENING = (
     "You are helping me build a speech therapy teaching tool. I need very short, isolated speech sounds, "
     "not words. Never say the letter name and never add a vowel afterward unless asked. Keep the clip under "
@@ -26,6 +25,7 @@ OPENING = (
     "room: no background noise, music, effects or breathing sounds. The clips will be used to train an audio model, "
     "so make the sound clean and easy to hear. Reply with only the sound."
 )
+
 
 
 class GeminiAudioVoice(SyntheticAudioGenerationVoice):
@@ -69,7 +69,7 @@ class GeminiAudioVoice(SyntheticAudioGenerationVoice):
         intro = f"The audio is a recording of a person making the correct {target.replace('_', ' ').upper()} sound, IPA {ipa}. Use it only as a reference for which sound to make. Use your own voice, and make the sound as clean and natural as possible. Don't copy the recording's voice, recording quality, length, background noise, or any vowel before or after the sound. Then do the following."
         return pcm, f"{intro}\n\nMake the {target} sound."
 
-    def _save_pcm_as_wav(self, path: Path, pcm: bytes, rate: int) -> None:
+    def __save_pcm_as_wav(self, path: Path, pcm: bytes, rate: int) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         with wave.open(str(path), "wb") as f:
             f.setnchannels(1)
@@ -77,7 +77,7 @@ class GeminiAudioVoice(SyntheticAudioGenerationVoice):
             f.setframerate(rate)
             f.writeframes(pcm)
 
-    async def _run_live_session(self, parts: list) -> tuple[bytes, str]:
+    async def __run_live_session(self, parts: list) -> tuple[bytes, str]:
         config = LiveConnectConfig(
             response_modalities=[Modality.AUDIO],
             system_instruction=OPENING,
@@ -108,7 +108,7 @@ class GeminiAudioVoice(SyntheticAudioGenerationVoice):
                     break
         return b"".join(chunks), text
 
-    def _generate_live(self, prompt: str, ref: tuple[bytes, str] | None = None) -> tuple[bytes, int, str]:
+    def __generate_live(self, prompt: str, ref: tuple[bytes, str] | None = None) -> tuple[bytes, int, str]:
         parts = [Part(text=prompt)]
         if ref:
             pcm_ref, text = ref
@@ -117,8 +117,11 @@ class GeminiAudioVoice(SyntheticAudioGenerationVoice):
                 Part(text=text),
             ]
 
-        pcm, text = asyncio.run(self._run_live_session(parts))
+        pcm, text = asyncio.run(self.__run_live_session(parts))
         return pcm, 24000, text
+
+    def __is_audio_too_short(self, pcm, rate) -> bool:
+        return len(pcm) < 2 * rate // 20
 
     def _generate_audio(
         self,
@@ -133,8 +136,10 @@ class GeminiAudioVoice(SyntheticAudioGenerationVoice):
         if text in self.prompts:
             prompt = self.prompts[text]
         ref = self._load_ref(text, ipa) if self.ref_dir else None
-        pcm, rate, _ = self._generate_live(prompt, ref)
-        self._save_pcm_as_wav(target_file_path, pcm, rate)
+        pcm, rate, _ = self.__generate_live(prompt, ref)
+        if self.__is_audio_too_short(pcm, rate):
+            return False
+        self.__save_pcm_as_wav(target_file_path, pcm, rate)
         return True
 
 
@@ -175,3 +180,7 @@ class GeminiAudioGenerator(SyntheticAudioGenerator):
 
     def is_distortion_capable(self) -> bool:
         return False
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "gemini"

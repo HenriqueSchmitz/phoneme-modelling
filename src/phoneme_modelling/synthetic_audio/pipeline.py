@@ -9,15 +9,16 @@ from phoneme_modelling.schema.synthetic_phoneme_metadata import SyntheticPhoneme
 from phoneme_modelling.synthetic_audio.debug import DebugGenerator
 from phoneme_modelling.synthetic_audio.gemini import GeminiAudioGenerator
 from phoneme_modelling.synthetic_audio.generation import SyntheticAudioGenerator
+from phoneme_modelling.synthetic_audio.generator_factory import SyntheticAudioGeneratorFactory
 
 
 class SyntheticAudioPipeline():
 
     @staticmethod
     def build_generators(configs: dict[str, Any]) -> list[SyntheticAudioGenerator]:
-        generators: list[SyntheticAudioGenerator] = []
-        generators.append(GeminiAudioGenerator(GeminiConfig(**configs["gemini"])))
-        return generators
+        factory = SyntheticAudioGeneratorFactory()
+        factory.register(GeminiAudioGenerator, GeminiConfig)
+        return factory.generate(configs)
 
     @classmethod
     def run(

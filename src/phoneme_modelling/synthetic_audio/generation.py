@@ -2,8 +2,9 @@ import os
 import random
 from abc import ABC, abstractmethod
 from typing import Optional
-
 from pathlib import Path
+
+from pydantic import BaseModel
 
 from phoneme_modelling.config.typing import PhonemeDistortionRequest, PhonemeGenerationRequests
 from phoneme_modelling.phonemes import TEXT_TO_IPA, VALID_IPA_STRINGS, VALID_SOUND_TEXTS
@@ -36,7 +37,7 @@ class SyntheticAudioGenerationVoice(ABC):
 
     @abstractmethod
     def get_voice_nickname(self) -> str:
-        raise NotImplementedError(f"Method get_voice_nickname must be implemented for {self.__name__}")
+        raise NotImplementedError()
 
     @abstractmethod
     def _generate_audio(
@@ -48,7 +49,7 @@ class SyntheticAudioGenerationVoice(ABC):
         distort_to_text: Optional[str] = None,
         distort_to_ipa: Optional[str] = None,
     ) -> bool:
-        raise NotImplementedError(f"Method generate_audio must be implemented for {self.__name__}")
+        raise NotImplementedError()
 
     def run_audio_generation(
         self,
@@ -98,19 +99,25 @@ class SyntheticAudioGenerationVoice(ABC):
 
 class SyntheticAudioGenerator(ABC):
 
-    def __init__(self) -> None:
+    def __init__(self, config: Optional[BaseModel] = None) -> None:
         super().__init__()
         self.__voices = self._init_voices()
         self.__number_of_digits = 3
 
     @abstractmethod
     def _init_voices(self) -> list[SyntheticAudioGenerationVoice]:
-        raise NotImplementedError(f"Method init_voices must be implemented for {self.__name__}")
+        raise NotImplementedError()
 
     @abstractmethod
     def is_distortion_capable(self) -> bool:
         """Returns whether the generation method is natively capable of generating distortions between phonemes."""
-        raise NotImplementedError(f"Method is_distortion_capable must be implemented for {self.__name__}")
+        raise NotImplementedError()
+
+    @classmethod
+    @abstractmethod
+    def get_config_name(cls) -> str:
+        """Returns the name used for the configs for the class."""
+        raise NotImplementedError()
 
     @staticmethod
     def __text_to_ipa(phoneme_text: str):

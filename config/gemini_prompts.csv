@@ -1,4 +1,4 @@
-file,phoneme,phoneme_ipa,prompt
+reference_file,phoneme,phoneme_ipa,prompt
 b_correct_01.wav,b,b,"Make the voiced B consonant, IPA b, as a single short burst. No 'buh', no vowel after it."
 ch_correct_01.wav,ch,tʃ,"Make the CH sound, IPA tʃ: press the front of the tongue on the ridge behind the top teeth so the air is stopped for a moment, then release it with a short, sharp rush of air, like the start of 'chip'. One quick sound, about a quarter of a second. It must start with a stop, so it is not a plain SH. No vowel after it."
 d_correct_01.wav,d,d,"Make the voiced D sound, IPA d, as at the start of 'dog', a single short burst. No vowel after it."
