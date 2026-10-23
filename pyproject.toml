@@ -1,0 +1,21 @@
+[project]
+name = "phoneme-modelling"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Henrique Schmitz", email = "schhenrique@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "google-genai>=2.33.0",
+    "pandas>=3.1.0",
+    "pydantic>=2.14.1",
+]
+
+[project.scripts]
+phoneme-modelling = "phoneme_modelling:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"

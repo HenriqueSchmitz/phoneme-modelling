@@ -1,0 +1,48 @@
+{
+    "number_of_digits": 3,
+    "phonemes_to_generate": ["r", "s", "g", "b", "z", "l", "th_voiced", "th_voiceless", "sh", "ch", "k", "v", "j", "t", "d", "f", "ng", "y", "w", "h", "n", "m", "p"],
+    "distortions_to_generate": [
+        {
+            "from_phoneme": "r",
+            "to_phoneme": "w",
+            "distortion_intensities": [0.0, 0.25, 0.5, 0.75, 1.0]
+        },
+        {
+            "from_phoneme": "s",
+            "to_phoneme": "sh",
+            "distortion_intensities": [0.0, 0.25, 0.5, 0.75, 1.0]
+        },
+        {
+            "from_phoneme": "s",
+            "to_phoneme": "z",
+            "min_distortion_intensity": 0.3,
+            "max_distortion_intensity": 0.8,
+            "number_of_samples": 3
+        },
+        {
+            "from_phoneme": "p",
+            "to_phoneme": "b",
+            "distortion_intensities": [0.0, 0.25, 0.5, 0.75, 1.0]
+        },
+        {
+            "from_phoneme": "th_voiced",
+            "to_phoneme": "th_voiceless",
+            "distortion_intensities": [0.0, 0.25, 0.5, 0.75, 1.0]
+        },
+        {
+            "from_phoneme": "m",
+            "to_phoneme": "n",
+            "distortion_intensities": [0.0, 0.25, 0.5, 0.75, 1.0]
+        }
+    ],
+    "generator_configs": {
+        "gemini": {
+            "project": "sara-capstone",
+            "model": "gemini-3.8-live",
+            "location": "us-central1",
+            "voices": ["Kore"],
+            "live": true,
+            "prompts_file": "config/gemini_prompts.csv"
+        }
+    }
+}
