@@ -10,7 +10,7 @@ class AudioEvaluatorFactory:
         self._registry: list[tuple[Type[AudioEvaluator], Optional[Type[BaseModel]]]] = []
 
     def register(self, evaluator_cls: Type[AudioEvaluator], config_cls: Optional[Type[BaseModel]] = None) -> None:
-        """Register an evaluator class."""
+        """Register an evaluator class along with its corresponding Pydantic config class."""
         self._registry.append((evaluator_cls, config_cls))
 
     def generate(self, evaluations: dict[str, Any]) -> list[AudioEvaluator]:

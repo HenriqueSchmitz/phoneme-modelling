@@ -4,6 +4,7 @@ import pandas as pd
 from pandas import DataFrame
 from pathlib import Path
 
+from phoneme_modelling.evaluation.debug import DebugEvaluator
 from phoneme_modelling.evaluation.evaluator import AudioEvaluator
 from phoneme_modelling.evaluation.evaluator_factory import AudioEvaluatorFactory
 from phoneme_modelling.schema.phoneme_evaluation import PhonemeEvaluationOutput
@@ -16,6 +17,7 @@ class AudioEvaluationPipeline():
     @staticmethod
     def build_evaluators(configs: dict[str, Any]) -> list[AudioEvaluator]:
         factory = AudioEvaluatorFactory()
+        factory.register(DebugEvaluator, None)
         return factory.generate(configs)
 
     @classmethod
@@ -30,8 +32,8 @@ class AudioEvaluationPipeline():
         if evaluator_configs is None:
             return
         evaluators = cls.build_evaluators(evaluator_configs)
-        audio_metadata = pd.read_csv(audio_metadata_file_path)
-        for audio_dict in audio_metadata.to_dict(orient="records"):
+        audio_metadata: list[dict] = pd.read_csv(audio_metadata_file_path).to_dict(orient="records")
+        for audio_dict in audio_metadata:
             audio_info = SyntheticPhonemeMetadata.model_validate(audio_dict)
             for evaluator in evaluators:
                 result = evaluator.evaluate(

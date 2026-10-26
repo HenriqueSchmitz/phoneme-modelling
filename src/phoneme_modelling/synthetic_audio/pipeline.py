@@ -25,7 +25,7 @@ class SyntheticAudioPipeline():
         generation_request: PhonemePipelineConfig,
         target_folder: Path,
         metadata_file_path: Path
-    ) -> None:
+    ) -> int:
         current_audio_count = 0
         generated_metadata: list[SyntheticPhonemeMetadata] = []
         generators = cls.build_generators(generation_request.generator_configs)
@@ -37,3 +37,4 @@ class SyntheticAudioPipeline():
             )
             generated_metadata.extend(metadata)
         DataFrame([entry.model_dump() for entry in generated_metadata]).to_csv(metadata_file_path, index=False)
+        return current_audio_count

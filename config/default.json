@@ -44,5 +44,11 @@
             "live": true,
             "prompts_file": "config/gemini_prompts.csv"
         }
+    },
+    "distorter_configs": {
+        "debug": null
+    },
+    "evaluator_configs": {
+        "debug": null
     }
 }

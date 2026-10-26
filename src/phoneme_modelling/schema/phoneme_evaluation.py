@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class PhonemeEvaluation(BaseModel):
-    is_correct: str
+    is_correct: bool
     detected_phoneme_text: Optional[str] = None
     detected_phoneme_ipa: Optional[str] = None
     quality: Optional[float] = None
@@ -18,7 +18,7 @@ class PhonemeEvaluationOutput(BaseModel):
     target_phoneme_text: str
     actual_phoneme_text: str
     actual_phoneme_ipa: str
-    is_correct: str
+    is_correct: bool
     detected_phoneme_text: Optional[str] = None
     detected_phoneme_ipa: Optional[str] = None
     quality: Optional[float] = None

@@ -34,3 +34,7 @@ class DebugGenerator(SyntheticAudioGenerator):
     def is_distortion_capable(self) -> bool:
         """Returns whether the generation method is natively capable of generating distortions between phonemes."""
         return True
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "debug"

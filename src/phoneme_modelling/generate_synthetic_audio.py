@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 
+from phoneme_modelling.distortion.pipeline import AudioDistortionPipeline
 from phoneme_modelling.evaluation.pipeline import AudioEvaluationPipeline
 from phoneme_modelling.schema.phoneme_pipeline_config import PhonemePipelineConfig
 from phoneme_modelling.synthetic_audio.pipeline import SyntheticAudioPipeline
@@ -28,7 +29,8 @@ def main() -> None:
         config_dict = json.load(config_file)
         config = PhonemePipelineConfig.model_validate(config_dict)
 
-    SyntheticAudioPipeline.run(config, output_folder, output_metadata_path)
+    synthetic_audio_count = SyntheticAudioPipeline.run(config, output_folder, output_metadata_path)
+    AudioDistortionPipeline.run(config, output_folder, output_metadata_path, synthetic_audio_count)
     AudioEvaluationPipeline.run(config, output_metadata_path, evaluation_output_path)
 
 if __name__ == "__main__":
