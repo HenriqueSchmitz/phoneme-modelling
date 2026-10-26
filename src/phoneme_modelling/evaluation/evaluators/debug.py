@@ -1,4 +1,7 @@
 from pathlib import Path
+from typing import Optional
+
+from pydantic import BaseModel
 
 from phoneme_modelling.evaluation.evaluator import AudioEvaluator
 from phoneme_modelling.schema.phoneme_evaluation import PhonemeEvaluation
@@ -6,6 +9,12 @@ from phoneme_modelling.schema.phoneme_evaluation import PhonemeEvaluation
 
 
 class DebugEvaluator(AudioEvaluator):
+
+    def __init__(self, config: Optional[BaseModel] = None):
+        # You can create a schema for the evaluator that extends pydantic's base model, then it will expect the config
+        # json to have those fields for the evaluator and automatically send you the config data. You just have to add
+        # the schema together with the class when registering the evaluator with the factory.
+        pass
 
     @staticmethod
     def get_name() -> str:
@@ -19,7 +28,7 @@ class DebugEvaluator(AudioEvaluator):
         print(debug_text)
         return PhonemeEvaluation(
             is_correct=True,
-            detected_phoneme_text=target_phoneme,
-            detected_phoneme_ipa=target_phoneme_ipa,
-            quality=0.9
+            detected_phoneme_text=target_phoneme, # Optional
+            detected_phoneme_ipa=target_phoneme_ipa, # Optional
+            quality=0.9 # Optional
         )

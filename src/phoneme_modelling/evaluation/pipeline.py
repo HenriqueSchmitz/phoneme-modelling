@@ -4,7 +4,7 @@ import pandas as pd
 from pandas import DataFrame
 from pathlib import Path
 
-from phoneme_modelling.evaluation.debug import DebugEvaluator
+from phoneme_modelling.evaluation.evaluators.debug import DebugEvaluator
 from phoneme_modelling.evaluation.evaluator import AudioEvaluator
 from phoneme_modelling.evaluation.evaluator_factory import AudioEvaluatorFactory
 from phoneme_modelling.schema.phoneme_evaluation import PhonemeEvaluationOutput

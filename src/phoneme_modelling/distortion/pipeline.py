@@ -5,7 +5,7 @@ import pandas as pd
 from pandas import DataFrame
 from pathlib import Path
 
-from phoneme_modelling.distortion.debug import DebugDistorter
+from phoneme_modelling.distortion.distorters.debug import DebugDistorter
 from phoneme_modelling.distortion.distorter import AudioDistorter
 from phoneme_modelling.distortion.distorter_factory import AudioDistorterFactory
 from phoneme_modelling.schema.phoneme_pipeline_config import PhonemePipelineConfig
