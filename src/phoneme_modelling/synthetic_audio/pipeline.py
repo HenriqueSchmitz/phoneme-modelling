@@ -3,10 +3,9 @@ from typing import Any
 from pandas import DataFrame
 from pathlib import Path
 
-from phoneme_modelling.config.typing import PhonemeGenerationRequests
 from phoneme_modelling.schema.gemini_config import GeminiConfig
+from phoneme_modelling.schema.phoneme_pipeline_config import PhonemePipelineConfig
 from phoneme_modelling.schema.synthetic_phoneme_metadata import SyntheticPhonemeMetadata
-from phoneme_modelling.synthetic_audio.debug import DebugGenerator
 from phoneme_modelling.synthetic_audio.gemini import GeminiAudioGenerator
 from phoneme_modelling.synthetic_audio.generation import SyntheticAudioGenerator
 from phoneme_modelling.synthetic_audio.generator_factory import SyntheticAudioGeneratorFactory
@@ -23,13 +22,13 @@ class SyntheticAudioPipeline():
     @classmethod
     def run(
         cls,
-        generation_request: PhonemeGenerationRequests,
+        generation_request: PhonemePipelineConfig,
         target_folder: Path,
         metadata_file_path: Path
     ) -> None:
         current_audio_count = 0
         generated_metadata: list[SyntheticPhonemeMetadata] = []
-        generators = cls.build_generators(generation_request["generator_configs"])
+        generators = cls.build_generators(generation_request.generator_configs)
         for generator in generators:
             current_audio_count, metadata = generator.generate_synthetic_audios(
                 generation_request=generation_request,

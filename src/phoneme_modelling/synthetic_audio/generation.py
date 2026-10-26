@@ -6,8 +6,9 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from phoneme_modelling.config.typing import PhonemeDistortionRequest, PhonemeGenerationRequests
 from phoneme_modelling.phonemes import TEXT_TO_IPA, VALID_IPA_STRINGS, VALID_SOUND_TEXTS
+from phoneme_modelling.schema.phoneme_distortion import PhonemeDistortionRequest
+from phoneme_modelling.schema.phoneme_pipeline_config import PhonemePipelineConfig
 from phoneme_modelling.schema.synthetic_phoneme_metadata import SyntheticPhonemeMetadata
 
 
@@ -159,10 +160,10 @@ class SyntheticAudioGenerator(ABC):
         return current_audio_count, generated_metadata
 
     def __sample_distortion_intensities(self, phoneme_distortion: PhonemeDistortionRequest) -> list[float]:
-        intensities = phoneme_distortion.get("distortion_intensities")
-        min_intensity = phoneme_distortion.get("min_distortion_intensity")
-        max_intensity = phoneme_distortion.get("max_distortion_intensity")
-        number_of_samples = phoneme_distortion.get("number_of_samples")
+        intensities = phoneme_distortion.distortion_intensities
+        min_intensity = phoneme_distortion.min_distortion_intensity
+        max_intensity = phoneme_distortion.max_distortion_intensity
+        number_of_samples = phoneme_distortion.number_of_samples
         if intensities is not None and (min_intensity or max_intensity or number_of_samples):
             raise ValueError(f"Cannot receive both fixed distortion intensity and sample from range. Received: {phoneme_distortion}")
         if intensities is not None:
@@ -191,8 +192,8 @@ class SyntheticAudioGenerator(ABC):
     ) -> tuple[int, list[SyntheticPhonemeMetadata]]:
         generated_metadata = []
         distortion_intensities = self.__sample_distortion_intensities(phoneme_distortion)
-        from_phoneme = phoneme_distortion["from_phoneme"]
-        to_phoneme = phoneme_distortion["to_phoneme"]
+        from_phoneme = phoneme_distortion.from_phoneme
+        to_phoneme = phoneme_distortion.to_phoneme
         from_phoneme_ipa = self.__text_to_ipa(from_phoneme)
         to_phoneme_ipa = self.__text_to_ipa(to_phoneme)
         for voice in self.__voices:
@@ -231,13 +232,13 @@ class SyntheticAudioGenerator(ABC):
 
     def generate_synthetic_audios(
         self,
-        generation_request: PhonemeGenerationRequests,
+        generation_request: PhonemePipelineConfig,
         current_audio_count: int,
         target_folder: Path
     ) -> tuple[int, list[SyntheticPhonemeMetadata]]:
         generated_metadata = []
-        phonemes_to_generate = generation_request["phonemes_to_generate"]
-        self.__number_of_digits = generation_request["number_of_digits"]
+        phonemes_to_generate = generation_request.phonemes_to_generate
+        self.__number_of_digits = generation_request.number_of_digits
         for phoneme_text in phonemes_to_generate:
             current_audio_count, phoneme_metadata = self.__generate_phoneme_from_text(
                 phoneme_text=phoneme_text,
@@ -245,7 +246,7 @@ class SyntheticAudioGenerator(ABC):
                 target_folder=target_folder
             )
             generated_metadata.extend(phoneme_metadata)
-        distortions_to_generate = generation_request["distortions_to_generate"]
+        distortions_to_generate = generation_request.distortions_to_generate
         if not distortions_to_generate or not self.is_distortion_capable():
             return current_audio_count, generated_metadata
         for phoneme_distortion in distortions_to_generate:
