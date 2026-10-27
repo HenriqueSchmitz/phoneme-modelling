@@ -25,6 +25,11 @@ class IpaRepresentations(Enum):
     M = "m"
     P = "p"
 
+ALTERNATIVE_IPA = {
+    "ʤ": "dʒ",
+    "ʧ": "tʃ",
+}
+
 TEXT_TO_IPA = {}
 for member in IpaRepresentations:
     TEXT_TO_IPA[member.name.upper()] = member.value

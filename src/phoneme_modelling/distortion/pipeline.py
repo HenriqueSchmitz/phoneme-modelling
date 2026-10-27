@@ -37,7 +37,9 @@ class AudioDistortionPipeline():
         audio_metadata: list[dict] = pd.read_csv(audio_metadata_file_path).to_dict(orient="records")
         for audio_dict in audio_metadata:
             audio_info = SyntheticPhonemeMetadata.model_validate(audio_dict)
-            original_file_path = audio_info.file_path
+            original_file_path = Path(audio_info.file_path)
+            if not original_file_path.is_file():
+                continue
             original_phoneme_text = audio_info.actual_phoneme_text
             original_phoneme_ipa = audio_info.actual_phoneme_ipa
             _, _, base_file_name = audio_info.file_name.replace(".wav", "").partition("_")
@@ -50,7 +52,7 @@ class AudioDistortionPipeline():
                 target_file_name = f"{sound_number}_{base_file_name}_{distortion_name}_distortion.wav"
                 target_file_path = Path(os.path.join(target_folder, target_file_name))
                 has_generated, distorted_ipa = distorter.distort(
-                    original_file_path=Path(original_file_path),
+                    original_file_path=original_file_path,
                     original_phoneme_text=original_phoneme_text,
                     original_phoneme_ipa=original_phoneme_ipa,
                     distortion_intensity=0.5,

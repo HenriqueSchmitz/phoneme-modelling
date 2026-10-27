@@ -49,6 +49,7 @@
         "debug": null
     },
     "evaluator_configs": {
-        "debug": null
+        "wav2vec2": null,
+        "zipa": null
     }
 }
